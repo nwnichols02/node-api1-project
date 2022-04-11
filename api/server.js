@@ -42,7 +42,7 @@ server.post(`/api/users`, (req, res) => {
   let user = req.body;
   if (!user.name || !user.bio) {
     res.status(400).json({
-      message: "Please provide name and bio for the user",
+      message: "Please provide name and bio for the user"
     });
   } else {
     User.insert(user)
