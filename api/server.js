@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("./users/model");
 const server = express();
-// server.use(express.json());
+server.use(express.json());
 
 server.get("/api/users", (req, res) => {
   User.find()
@@ -38,20 +38,26 @@ server.get(`/api/users/:id`, (req, res) => {
 });
 
 server.post(`/api/users`, (req, res) => {
-    console.log(req)
+  console.log(req);
   let user = req.body;
-  User.insert(user)
-    .then(user => {
-        res.status(201).json(user)
+  if (!user.name || !user.bio) {
+    res.status(400).json({
+      message: "Please provide name and bio for the user",
+    });
+  } else {
+    User.insert(user)
+      .then((user) => {
+        res.status(201).json(user);
         return user;
-    })
-    .catch((err) =>
-      res.status(400).json({
-        message: "Please provide name and bio for the user",
-        err: err.message,
-        stack: err.stack,
       })
-    );
+      .catch((err) =>
+        res.status(500).json({
+          message: "error creating user",
+          err: err.message,
+          stack: err.stack,
+        })
+      );
+  }
 });
 
 server.get("/", (req, res) => {
